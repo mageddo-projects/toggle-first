@@ -6,6 +6,7 @@ import com.mageddo.featureswitch.utils.StringUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,21 +25,21 @@ public class JDBCFeatureRepository implements FeatureRepository {
 	@Override
 	public FeatureMetadata getMetadata(Feature feature, String user) {
 		try (
-			final Connection con = dataSource.getConnection();
+			final Connection con = dataSource.getConnection()
 		) {
 			if(StringUtils.isBlank(user)){
 				return featureMetadata(con, feature);
 			}
 			return featureMetadata(con, feature, user);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new SQLToggleFirstException("Failed to recover feature metadata", e);
 		}
 	}
 
 	@Override
 	public int updateMetadata(FeatureMetadata featureMetadata, String user) {
 		try (
-			final Connection con = dataSource.getConnection();
+			final Connection con = dataSource.getConnection()
 		) {
 			if(StringUtils.isBlank(user)){
 				if(featureMetadata(con, featureMetadata.feature()) == null){
@@ -58,7 +59,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 			}
 			return updateFeature(con, featureMetadata, user);
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new SQLToggleFirstException("Failed to update feature metadata", e);
 		}
 	}
 
@@ -75,7 +76,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 			stm.setString(2, mapper.writeValueAsString(featureMetadata.parameters()));
 			return stm.executeUpdate();
 		} catch (IOException e){
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -95,7 +96,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 			stm.setString(3, mapper.writeValueAsString(featureMetadata.parameters()));
 			return stm.executeUpdate();
 		} catch (IOException e){
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -110,7 +111,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 			stm.setString(2, featureMetadata.feature().name());
 			return stm.executeUpdate();
 		} catch (IOException e){
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -126,7 +127,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 			stm.setString(3, user);
 			return stm.executeUpdate();
 		} catch (IOException e){
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
@@ -164,7 +165,7 @@ public class JDBCFeatureRepository implements FeatureRepository {
 				mapper.readValue(rs.getString("VAL_PARAMETER"), LinkedHashMap.class)
 			);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new UncheckedIOException(e);
 		}
 	}
 
