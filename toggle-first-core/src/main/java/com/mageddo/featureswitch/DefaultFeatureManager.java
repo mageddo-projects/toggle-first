@@ -166,11 +166,13 @@ public class DefaultFeatureManager implements FeatureManager {
 	public boolean isActive(Feature feature, String user) {
 
 		final FeatureMetadata metadata = metadata(feature, user);
-		if(activationStrategies().isEmpty() || metadata.isActive()){
+		final Collection<ActivationStrategy> strategies = getFeatureActivationStrategies(metadata(feature));
+
+		if(strategies.isEmpty() || metadata.isActive()){
 			return metadata.isActive();
 		}
 
-		for (final ActivationStrategy activationStrategy : getFeatureActivationStrategies(metadata(feature))) {
+		for (final ActivationStrategy activationStrategy : strategies) {
 			if(activationStrategy.isActive(metadata)){
 				return false;
 			}
