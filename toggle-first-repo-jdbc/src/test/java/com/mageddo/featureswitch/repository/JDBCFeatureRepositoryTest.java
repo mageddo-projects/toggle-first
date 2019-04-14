@@ -1,13 +1,12 @@
 package com.mageddo.featureswitch.repository;
 
+import com.mageddo.commons.DatabaseConfigurator;
 import com.mageddo.featureswitch.*;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +16,7 @@ public class JDBCFeatureRepositoryTest {
 
 	private static JDBCDataSource dataSource;
 	private static JDBCFeatureRepository jdbcFeatureRepository;
+	private final DatabaseConfigurator databaseConfigurator = new DatabaseConfigurator(dataSource);
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -24,39 +24,12 @@ public class JDBCFeatureRepositoryTest {
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
 		dataSource.setURL("jdbc:hsqldb:mem:testdb;set schema public");
-				jdbcFeatureRepository = new JDBCFeatureRepository(dataSource);
+		jdbcFeatureRepository = new JDBCFeatureRepository(dataSource);
 	}
 
 	@Before
-	public void before() throws SQLException {
-		try(final Connection conn = dataSource.getConnection()){
-
-			conn.prepareStatement("DROP SCHEMA PUBLIC CASCADE").executeUpdate();
-
-			StringBuilder sql = new StringBuilder()
-				.append("CREATE TABLE USER_PARAMETER ( \n")
-				.append("	IDT_USER_PARAMETER INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE) PRIMARY KEY, \n")
-				.append("	IDT_PARAMETER INTEGER NOT NULL, \n")
-				.append("	COD_USER VARCHAR(255) NOT NULL, \n")
-				.append("	VAL_PARAMETER VARCHAR(1000), \n")
-				.append("	DAT_CREATION TIMESTAMP NOT NULL, \n")
-				.append("	DAT_UPDATE TIMESTAMP NOT NULL, \n")
-				.append("	UNIQUE(IDT_PARAMETER, COD_USER) \n")
-				.append("); \n");
-			conn.prepareStatement(sql.toString()).executeUpdate();
-
-			sql = new StringBuilder()
-				.append(" \n")
-				.append("CREATE TABLE PARAMETER( \n")
-				.append("	IDT_PARAMETER INTEGER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE) PRIMARY KEY, \n")
-				.append("	NAM_PARAMETER VARCHAR(255) NOT NULL, \n")
-				.append("	VAL_PARAMETER VARCHAR(1000), \n")
-				.append("	DAT_CREATION TIMESTAMP NOT NULL, \n")
-				.append("	DAT_UPDATE TIMESTAMP NOT NULL, \n")
-				.append("	UNIQUE(NAM_PARAMETER) \n")
-				.append("); \n");
-			conn.prepareStatement(sql.toString()).executeUpdate();
-		}
+	public void before(){
+		databaseConfigurator.update("TRUNCATE SCHEMA PUBLIC AND COMMIT");
 	}
 
 	@Test

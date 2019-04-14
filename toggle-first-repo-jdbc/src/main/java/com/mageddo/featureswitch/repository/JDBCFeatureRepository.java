@@ -3,6 +3,8 @@ package com.mageddo.featureswitch.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mageddo.featureswitch.*;
 import com.mageddo.commons.StringUtils;
+import com.mageddo.featureswitch.flyway.MigrationUtils;
+import org.flywaydb.core.Flyway;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -16,10 +18,22 @@ import java.util.LinkedHashMap;
 public class JDBCFeatureRepository implements FeatureRepository {
 
 	private final DataSource dataSource;
-	private final ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper;
 
 	public JDBCFeatureRepository(final DataSource dataSource) {
+		this(dataSource, new ObjectMapper());
+	}
+
+	public JDBCFeatureRepository(final DataSource dataSource, ObjectMapper mapper) {
 		this.dataSource = dataSource;
+		this.mapper = mapper;
+		MigrationUtils.migrate(dataSource);
+	}
+
+	public JDBCFeatureRepository(final DataSource dataSource, Flyway flyway, ObjectMapper mapper) {
+		this.dataSource = dataSource;
+		this.mapper = mapper;
+		MigrationUtils.migrate(flyway);
 	}
 
 	@Override
