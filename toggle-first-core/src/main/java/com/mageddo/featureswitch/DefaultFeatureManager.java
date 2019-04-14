@@ -2,7 +2,7 @@ package com.mageddo.featureswitch;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.mageddo.common.jackson.JsonUtils;
-import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
+import com.mageddo.featureswitch.activation.ActivationStrategy;
 import com.mageddo.featureswitch.repository.FeatureRepository;
 
 import java.util.*;
@@ -169,18 +169,19 @@ public class DefaultFeatureManager implements FeatureManager {
 	@Override
 	public boolean isActive(Feature feature, String user) {
 
-		final FeatureMetadata metadata = metadata(feature, user);
-		final Collection<ActivationStrategy> strategies = getFeatureActivationStrategies(metadata(feature));
+		final FeatureMetadata featureMetadata = metadata(feature);
+		final FeatureMetadata userFeatureMetadata = metadata(feature, user);
+		final Collection<ActivationStrategy> strategies = getFeatureActivationStrategies(featureMetadata);
 
-		if(strategies.isEmpty() || metadata.isActive()){
-			return metadata.isActive();
+		if(strategies.isEmpty() || userFeatureMetadata.isActive()){
+			return userFeatureMetadata.isActive();
 		}
 
 		for (final ActivationStrategy activationStrategy : strategies) {
-			if(!activationStrategy.isActive(metadata)){
+			if(!activationStrategy.isActive(featureMetadata, user)){
 				return false;
 			} else {
-				activationStrategy.postHandleActive(this, metadata);
+				activationStrategy.postHandleActive(this, userFeatureMetadata);
 			}
 		}
 		return true;

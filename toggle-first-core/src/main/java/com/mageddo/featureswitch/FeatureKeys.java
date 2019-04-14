@@ -1,6 +1,6 @@
 package com.mageddo.featureswitch;
 
-import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
+import com.mageddo.featureswitch.activation.ActivationStrategy;
 
 public final class FeatureKeys {
 	/**

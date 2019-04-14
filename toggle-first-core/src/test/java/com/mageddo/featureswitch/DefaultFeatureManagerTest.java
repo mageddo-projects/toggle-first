@@ -1,8 +1,8 @@
 package com.mageddo.featureswitch;
 
-import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
-import com.mageddo.featureswitch.activationstrategy.GradualActivationStrategy;
-import com.mageddo.featureswitch.activationstrategy.NopActivationStrategy;
+import com.mageddo.featureswitch.activation.ActivationStrategy;
+import com.mageddo.featureswitch.activation.GradualActivationStrategy;
+import com.mageddo.featureswitch.activation.NopActivationStrategy;
 import com.mageddo.featureswitch.repository.InMemoryFeatureRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,7 +71,7 @@ public class DefaultFeatureManagerTest {
 
 		// assert
 		assertEquals(false, active);
-		verify(activeActivationStrategy).isActive(any());
+		verify(activeActivationStrategy).isActive(any(), any());
 
 		final String databaseStatus = featureManager
 			.repository()
@@ -99,7 +99,7 @@ public class DefaultFeatureManagerTest {
 		// assert
 		assertEquals(false, active);
 		for (ActivationStrategy activationStrategy : featureManager.activationStrategies()) {
-			verify(activationStrategy, never()).isActive(any());
+			verify(activationStrategy, never()).isActive(any(), any());
 		}
 	}
 
@@ -125,7 +125,7 @@ public class DefaultFeatureManagerTest {
 
 		// assert
 		assertEquals(true, active);
-		verify(activeActivationStrategy, never()).isActive(any());
+		verify(activeActivationStrategy, never()).isActive(any(), any());
 	}
 
 	@Test
@@ -152,7 +152,7 @@ public class DefaultFeatureManagerTest {
 		// assert
 		assertEquals(true, active);
 		assertEquals(false, active2);
-		verify(activeActivationStrategy).isActive(any());
+		verify(activeActivationStrategy).isActive(any(), any());
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class DefaultFeatureManagerTest {
 			.activationStrategies(Set.of(activeActivationStrategy, new GradualActivationStrategy()))
 		;
 
-		doReturn(true).when(activeActivationStrategy).isActive(any());
+		doReturn(true).when(activeActivationStrategy).isActive(any(), any());
 
 		final var metadata = featureManager.metadata(feature);
 		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
@@ -177,7 +177,7 @@ public class DefaultFeatureManagerTest {
 
 		// assert
 		assertEquals(true, active);
-		verify(activeActivationStrategy).isActive(any());
+		verify(activeActivationStrategy).isActive(any(), any());
 
 		final String databaseStatus = featureManager
 			.repository()

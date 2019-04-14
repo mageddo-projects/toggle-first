@@ -1,4 +1,4 @@
-package com.mageddo.featureswitch.activationstrategy;
+package com.mageddo.featureswitch.activation;
 
 import com.mageddo.featureswitch.FeatureMetadata;
 
@@ -22,7 +22,7 @@ public class NopActivationStrategy implements ActivationStrategy {
 	}
 
 	@Override
-	public boolean isActive(FeatureMetadata featureMetadata) {
+	public boolean isActive(FeatureMetadata featureMetadata, String user) {
 		return featureMetadata.isActive();
 	}
 }
