@@ -1,8 +1,8 @@
 package com.mageddo.featureswitch;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mageddo.common.jackson.JsonUtils;
+import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
 import com.mageddo.featureswitch.repository.FeatureRepository;
 
 import java.util.*;
@@ -12,10 +12,15 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	private FeatureRepository featureRepository;
 	private FeatureMetadataProvider featureMetadataProvider;
+	private Set<ActivationStrategy> activationStrategies;
+
+	public DefaultFeatureManager() {
+		this.activationStrategies = Collections.emptySet();
+	}
 
 	@Override
-	public List<ActivationStrategy> activationStrategies() {
-		return Collections.emptyList();
+	public Set<ActivationStrategy> activationStrategies() {
+		return activationStrategies;
 	}
 
 	@Override
@@ -173,7 +178,7 @@ public class DefaultFeatureManager implements FeatureManager {
 		}
 
 		for (final ActivationStrategy activationStrategy : strategies) {
-			if(activationStrategy.isActive(metadata)){
+			if(!activationStrategy.isActive(metadata)){
 				return false;
 			}
 		}
@@ -210,6 +215,11 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	public DefaultFeatureManager featureMetadataProvider(FeatureMetadataProvider featureMetadataProvider) {
 		this.featureMetadataProvider = featureMetadataProvider;
+		return this;
+	}
+
+	public DefaultFeatureManager activationStrategies(Set<ActivationStrategy> activationStrategies) {
+		this.activationStrategies = activationStrategies;
 		return this;
 	}
 }

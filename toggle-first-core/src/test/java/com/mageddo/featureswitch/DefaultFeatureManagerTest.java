@@ -1,13 +1,23 @@
 package com.mageddo.featureswitch;
 
+import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
+import com.mageddo.featureswitch.activationstrategy.GradualActivationStrategy;
+import com.mageddo.featureswitch.activationstrategy.NopActivationStrategy;
 import com.mageddo.featureswitch.repository.InMemoryFeatureRepository;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static com.mageddo.common.jackson.JsonUtils.writeValueAsString;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultFeatureManagerTest {
 
 	@Test
@@ -38,6 +48,52 @@ public class DefaultFeatureManagerTest {
 
 		assertEquals(null, featureManager.metadata(feature, "user1").get("K2"));
 
+	}
+
+	@Test
+	public void mustCheckEnabledActivationStrategies(){
+		// arrange
+		final var feature = new BasicFeature("MY_FEATURE");
+		final var activeActivationStrategy = spy(new NopActivationStrategy());
+
+		final var featureManager = new DefaultFeatureManager()
+			.featureRepository(new InMemoryFeatureRepository())
+			.activationStrategies(Set.of(activeActivationStrategy, new GradualActivationStrategy()))
+		;
+
+		final var metadata = featureManager.metadata(feature);
+		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
+		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
+
+		// act
+		final boolean active = featureManager.isActive(feature);
+
+		// assert
+		assertEquals(false, active);
+		verify(activeActivationStrategy).isActive(any());
+	}
+
+	@Test
+	public void mustNotCheckActivationStrategiesWhenThereIsNoneEnabled(){
+		// arrange
+		final var feature = new BasicFeature("MY_FEATURE");
+		final var featureManager = new DefaultFeatureManager()
+			.featureRepository(new InMemoryFeatureRepository())
+			.activationStrategies(Set.of(spy(new GradualActivationStrategy()), spy(new NopActivationStrategy())))
+		;
+
+		final var metadata = featureManager.metadata(feature);
+		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, "[]");
+		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
+
+		// act
+		final boolean active = featureManager.isActive(feature);
+
+		// assert
+		assertEquals(false, active);
+		for (ActivationStrategy activationStrategy : featureManager.activationStrategies()) {
+			verify(activationStrategy, never()).isActive(any());
+		}
 	}
 
 }

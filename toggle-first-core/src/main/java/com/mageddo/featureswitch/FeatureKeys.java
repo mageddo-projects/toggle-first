@@ -1,5 +1,7 @@
 package com.mageddo.featureswitch;
 
+import com.mageddo.featureswitch.activationstrategy.ActivationStrategy;
+
 public final class FeatureKeys {
 	/**
 	 * Value stored at the feature used to general purpose

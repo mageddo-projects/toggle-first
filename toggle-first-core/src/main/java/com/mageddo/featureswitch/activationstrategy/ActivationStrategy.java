@@ -1,4 +1,6 @@
-package com.mageddo.featureswitch;
+package com.mageddo.featureswitch.activationstrategy;
+
+import com.mageddo.featureswitch.FeatureMetadata;
 
 import java.util.UUID;
 
