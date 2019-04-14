@@ -20,6 +20,8 @@ public interface FeatureManager {
 
 	FeatureMetadataProvider metadataProvider();
 
+
+
 	/**
 	 * Just activate feature, should keep original feature parameters
 	 * @see FeatureKeys

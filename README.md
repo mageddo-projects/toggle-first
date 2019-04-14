@@ -1,6 +1,7 @@
-![](https://i.imgur.com/0hG2AWi.png)
-
-[source](https://drive.google.com/file/d/1ri4A7a6Ze788m9iErIf1gYs3fWc7lPDz/view)
+<iframe 
+	src="https://www.draw.io/?lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=toggle-first-architecture.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1ri4A7a6Ze788m9iErIf1gYs3fWc7lPDz%26export%3Ddownload"
+	width="100%" height="480" frameborder="0" allowfullscreen
+></iframe>
 
 ### Using With Spring
 
