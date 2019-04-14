@@ -4,8 +4,8 @@ plugins {
 }
 
 repositories {
-	mavenCentral()
 	mavenLocal()
+	mavenCentral()
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8

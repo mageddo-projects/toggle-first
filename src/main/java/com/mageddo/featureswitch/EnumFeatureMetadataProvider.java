@@ -1,5 +1,7 @@
 package com.mageddo.featureswitch;
 
+import com.mageddo.featureswitch.utils.AnnotationUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 

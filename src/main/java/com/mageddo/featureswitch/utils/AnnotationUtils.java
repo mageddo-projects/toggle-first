@@ -1,4 +1,6 @@
-package com.mageddo.featureswitch;
+package com.mageddo.featureswitch.utils;
+
+import com.mageddo.featureswitch.Feature;
 
 import java.lang.annotation.Annotation;
 
