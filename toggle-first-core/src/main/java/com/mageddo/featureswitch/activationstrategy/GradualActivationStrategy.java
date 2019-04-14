@@ -14,6 +14,11 @@ public class GradualActivationStrategy implements ActivationStrategy {
 	}
 
 	@Override
+	public String description() {
+		return "Activate feature by percentage chance";
+	}
+
+	@Override
 	public boolean isActive(FeatureMetadata featureMetadata) {
 		return true;
 	}

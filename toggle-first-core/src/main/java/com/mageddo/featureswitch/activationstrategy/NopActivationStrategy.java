@@ -17,6 +17,11 @@ public class NopActivationStrategy implements ActivationStrategy {
 	}
 
 	@Override
+	public String description() {
+		return "Does nothing, delegates to feature metadata";
+	}
+
+	@Override
 	public boolean isActive(FeatureMetadata featureMetadata) {
 		return featureMetadata.isActive();
 	}

@@ -179,6 +179,8 @@ public class DefaultFeatureManager implements FeatureManager {
 		for (final ActivationStrategy activationStrategy : strategies) {
 			if(!activationStrategy.isActive(metadata)){
 				return false;
+			} else {
+				activationStrategy.postHandleActive(this, metadata);
 			}
 		}
 		return true;

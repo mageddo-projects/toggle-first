@@ -14,6 +14,7 @@ import java.util.Set;
 
 import static com.mageddo.common.jackson.JsonUtils.writeValueAsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -71,6 +72,12 @@ public class DefaultFeatureManagerTest {
 		// assert
 		assertEquals(false, active);
 		verify(activeActivationStrategy).isActive(any());
+
+		final String databaseStatus = featureManager
+			.repository()
+			.getMetadata(feature, null)
+			.get(FeatureKeys.STATUS);
+		assertNull(databaseStatus);
 	}
 
 	@Test
@@ -99,7 +106,7 @@ public class DefaultFeatureManagerTest {
 
 	@Test
 	public void mustNotCheckActivationFeatureWhenFeatureIsAlreadyActive(){
-// arrange
+		// arrange
 		final var feature = new BasicFeature("MY_FEATURE");
 		final var activeActivationStrategy = spy(new NopActivationStrategy());
 
@@ -147,5 +154,37 @@ public class DefaultFeatureManagerTest {
 		assertEquals(false, active2);
 		verify(activeActivationStrategy).isActive(any());
 	}
+
+	@Test
+	public void mustCheckStrategyThenUpdateRepository(){
+		// arrange
+		final var feature = new BasicFeature("MY_FEATURE");
+		final var activeActivationStrategy = spy(new NopActivationStrategy());
+
+		final var featureManager = new DefaultFeatureManager()
+			.featureRepository(new InMemoryFeatureRepository())
+			.activationStrategies(Set.of(activeActivationStrategy, new GradualActivationStrategy()))
+		;
+
+		doReturn(true).when(activeActivationStrategy).isActive(any());
+
+		final var metadata = featureManager.metadata(feature);
+		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
+		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
+
+		// act
+		final boolean active = featureManager.isActive(feature);
+
+		// assert
+		assertEquals(true, active);
+		verify(activeActivationStrategy).isActive(any());
+
+		final String databaseStatus = featureManager
+			.repository()
+			.getMetadata(feature, null)
+			.get(FeatureKeys.STATUS);
+		assertEquals(Status.ACTIVE.getCodeAsString(), databaseStatus);
+	}
+
 
 }
