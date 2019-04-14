@@ -96,4 +96,55 @@ public class DefaultFeatureManagerTest {
 		}
 	}
 
+
+	@Test
+	public void mustNotCheckActivationFeatureWhenFeatureIsAlreadyActive(){
+// arrange
+		final var feature = new BasicFeature("MY_FEATURE");
+		final var activeActivationStrategy = spy(new NopActivationStrategy());
+
+		final var featureManager = new DefaultFeatureManager()
+			.featureRepository(new InMemoryFeatureRepository())
+			.activationStrategies(Set.of(activeActivationStrategy))
+			;
+
+		final var metadata = featureManager.metadata(feature);
+		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
+		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
+		featureManager.activate(feature);
+
+		// act
+		final boolean active = featureManager.isActive(feature);
+
+		// assert
+		assertEquals(true, active);
+		verify(activeActivationStrategy, never()).isActive(any());
+	}
+
+	@Test
+	public void mustNotCheckActivationFeatureWhenFeatureIsAlreadyActiveForTheUser(){
+		// arrange
+		final var userId = "123";
+		final var feature = new BasicFeature("MY_FEATURE");
+		final var activeActivationStrategy = spy(new NopActivationStrategy());
+
+		final var featureManager = new DefaultFeatureManager()
+			.featureRepository(new InMemoryFeatureRepository())
+			.activationStrategies(Set.of(activeActivationStrategy))
+			;
+
+		final var metadata = featureManager.metadata(feature);
+		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
+		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
+
+		featureManager.userActivate(feature, userId);
+
+		// act
+		final boolean active = featureManager.isActive(feature, userId);
+
+		// assert
+		assertEquals(true, active);
+		verify(activeActivationStrategy, never()).isActive(any());
+	}
+
 }
