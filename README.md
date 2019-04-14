@@ -1,4 +1,4 @@
-<iframe frameborder="0" style="width:100%;height:284px;" src="https://www.draw.io/?lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=toggle-first-architecture.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1ri4A7a6Ze788m9iErIf1gYs3fWc7lPDz%26export%3Ddownload"></iframe>
+[![](https://i.imgur.com/5pch2rR.png)](https://www.draw.io/?lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&title=toggle-first-architecture.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1ri4A7a6Ze788m9iErIf1gYs3fWc7lPDz%26export%3Ddownload)
 
 ### Using With Spring
 
