@@ -1,8 +1,10 @@
 package com.mageddo.featureswitch;
 
+import com.mageddo.featureswitch.activation.ActivationStrategy;
 import com.mageddo.featureswitch.repository.FeatureRepository;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Make a bridge between who ask for the feature metadata, the {@link FeatureRepository} and the activation strategies.
@@ -12,6 +14,8 @@ import java.util.Map;
  * @see DefaultFeatureManager
  */
 public interface FeatureManager {
+
+	Set<ActivationStrategy> activationStrategies();
 
 	/**
 	 * Retrieve the current repository for the project
@@ -56,11 +60,6 @@ public interface FeatureManager {
 	 */
 	void userDeactivate(Feature feature, String user);
 
-	/**
-	 * Retrieve feature metadata from Repository or the default metadata if
-	 */
-	FeatureMetadata metadata(Feature feature);
-
 	void updateMetadata(Feature feature, Map<String, String> parameters);
 
 	/**
@@ -70,6 +69,11 @@ public interface FeatureManager {
 	 * @param parameters
 	 */
 	void updateMetadata(Feature feature, String user, Map<String, String> parameters);
+
+	/**
+	 * Retrieve feature metadata from Repository or the default metadata if
+	 */
+	FeatureMetadata metadata(Feature feature);
 
 	/**
 	 * Retrieve feature metadata for the specified user from Repository or the default metadata.
@@ -96,4 +100,5 @@ public interface FeatureManager {
 	String value(Feature feature);
 
 	String value(Feature feature, String user);
+
 }

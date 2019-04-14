@@ -30,6 +30,10 @@ public enum Status {
 		return code;
 	}
 
+	public String getCodeAsString() {
+		return String.valueOf(code);
+	}
+
 	public static Status fromCode(String code){
 		return fromCode(code, Status.INACTIVE);
 	}

@@ -1,14 +1,27 @@
 package com.mageddo.featureswitch;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.mageddo.common.jackson.JsonUtils;
+import com.mageddo.featureswitch.activation.ActivationStrategy;
 import com.mageddo.featureswitch.repository.FeatureRepository;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultFeatureManager implements FeatureManager {
 
 	private FeatureRepository featureRepository;
 	private FeatureMetadataProvider featureMetadataProvider;
+	private Set<ActivationStrategy> activationStrategies;
+
+	public DefaultFeatureManager() {
+		this.activationStrategies = Collections.emptySet();
+	}
+
+	@Override
+	public Set<ActivationStrategy> activationStrategies() {
+		return activationStrategies;
+	}
 
 	@Override
 	public FeatureRepository repository() {
@@ -22,7 +35,7 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	@Override
 	public void activate(Feature feature) {
-		final FeatureMetadata metadata = findMetadata(feature, null)
+		final FeatureMetadata metadata = metadataOrDefault(feature, null)
 		.set(FeatureKeys.STATUS, String.valueOf(Status.ACTIVE.getCode()))
 		;
 		repository().updateMetadata(metadata, null);
@@ -30,7 +43,7 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	@Override
 	public void activate(Feature feature, String value) {
-		final FeatureMetadata metadata = findMetadata(feature, null)
+		final FeatureMetadata metadata = metadataOrDefault(feature, null)
 		.set(FeatureKeys.STATUS, String.valueOf(Status.ACTIVE.getCode()))
 		.set(FeatureKeys.VALUE, value)
 		;
@@ -40,11 +53,10 @@ public class DefaultFeatureManager implements FeatureManager {
 	@Override
 	public void userActivate(Feature feature, String user) {
 		{
-			final FeatureMetadata metadata = findMetadata(feature, user)
+			final FeatureMetadata metadata = metadataOrDefault(feature, user)
 			.set(FeatureKeys.STATUS, String.valueOf(Status.RESTRICTED.getCode()))
 			;
-
-			repository().updateMetadata(metadata, null);
+			updateMetadata(feature, metadata.parameters());
 		}
 		{
 			FeatureMetadata metadata = repository().getMetadata(feature, user);
@@ -62,7 +74,7 @@ public class DefaultFeatureManager implements FeatureManager {
 	@Override
 	public void userActivate(Feature feature, String user, String value) {
 		{
-			final FeatureMetadata metadata = findMetadata(feature, null)
+			final FeatureMetadata metadata = metadataOrDefault(feature, null)
 			.set(FeatureKeys.STATUS, String.valueOf(Status.RESTRICTED.getCode()))
 			;
 			repository().updateMetadata(metadata, null);
@@ -136,13 +148,17 @@ public class DefaultFeatureManager implements FeatureManager {
 				return metadata;
 			case RESTRICTED:
 				return Optional
-				.ofNullable(repository().getMetadata(feature, user))
-				.orElse(
-					new DefaultFeatureMetadata(feature)
-					.set(FeatureKeys.STATUS, String.valueOf(Status.INACTIVE.getCode()))
-				);
+					.ofNullable(repository().getMetadata(feature, user))
+					.orElse(
+						new DefaultFeatureMetadata(feature)
+							.set(FeatureKeys.STATUS, String.valueOf(Status.INACTIVE.getCode()))
+					);
 		}
 		return metadata;
+	}
+
+	FeatureMetadata metadataOrDefault(Feature feature, String user) {
+		return repository().getMetadataOrDefault(feature, user, new DefaultFeatureMetadata(feature));
 	}
 
 	@Override
@@ -152,8 +168,35 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	@Override
 	public boolean isActive(Feature feature, String user) {
-		final FeatureMetadata metadata = metadata(feature, user);
-		return metadata.status() == Status.ACTIVE;
+
+		final FeatureMetadata featureMetadata = metadata(feature);
+		final FeatureMetadata userFeatureMetadata = metadata(feature, user);
+		final Collection<ActivationStrategy> strategies = getFeatureActivationStrategies(featureMetadata);
+
+		if(strategies.isEmpty() || userFeatureMetadata.isActive()){
+			return userFeatureMetadata.isActive();
+		}
+
+		for (final ActivationStrategy activationStrategy : strategies) {
+			if(!activationStrategy.isActive(featureMetadata, user)){
+				return false;
+			} else {
+				activationStrategy.postHandleActive(this, userFeatureMetadata);
+			}
+		}
+		return true;
+	}
+
+	private Collection<ActivationStrategy> getFeatureActivationStrategies(FeatureMetadata metadata) {
+		final Set<String> strategiesIds = JsonUtils.readValue(
+			metadata.get(FeatureKeys.ACTIVATION_STRATEGIES, "[]"),
+			new TypeReference<Set<String>>() {}
+		);
+		return activationStrategies()
+			.stream()
+			.filter(it -> strategiesIds.contains(String.valueOf(it.id())))
+			.collect(Collectors.toCollection(LinkedHashSet::new))
+		;
 	}
 
 	@Override
@@ -177,7 +220,8 @@ public class DefaultFeatureManager implements FeatureManager {
 		return this;
 	}
 
-	FeatureMetadata findMetadata(Feature feature, String user) {
-		return repository().getMetadataOrDefault(feature, user, new DefaultFeatureMetadata(feature));
+	public DefaultFeatureManager activationStrategies(Set<ActivationStrategy> activationStrategies) {
+		this.activationStrategies = activationStrategies;
+		return this;
 	}
 }
