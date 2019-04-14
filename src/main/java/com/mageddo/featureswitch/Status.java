@@ -4,8 +4,19 @@ import java.util.Objects;
 
 public enum Status {
 
+	/**
+	 * Feature is active for all users
+	 */
 	ACTIVE(1),
+
+	/**
+	 * Feature is inactive for all users
+	 */
 	INACTIVE(0),
+
+	/**
+	 * Feature is active but you need to check if it is active for a specific user
+	 */
 	RESTRICTED(2),
 	;
 
@@ -19,21 +30,12 @@ public enum Status {
 		return code;
 	}
 
-	public static Status fromCode(int code){
-		for (Status value : values()) {
-			if(value.getCode() == code){
-				return value;
-			}
-		}
-		return null;
-	}
-
 	public static Status fromCode(String code){
 		return fromCode(code, Status.INACTIVE);
 	}
 
 	public static Status fromCode(String code, Status defaultStatus){
-		for (Status value : values()) {
+		for (final Status value : values()) {
 			if(Objects.equals(code, String.valueOf(value.getCode()))){
 				return value;
 			}

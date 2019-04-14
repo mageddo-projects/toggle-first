@@ -2,8 +2,15 @@ package com.mageddo.featureswitch;
 
 import java.util.Map;
 
-import static com.mageddo.featureswitch.utils.StringUtils.isBlank;
+import static com.mageddo.commons.StringUtils.isBlank;
 
+/**
+ * Represents stored feature metadata, all feature data is stored at {@link #parameters()}.
+ * You can use {@link #set(String, String)} and {@link #remove(String)} to manage data and the others methods
+ * to parse and retrieve data
+ *
+ * @see DefaultFeatureMetadata
+ */
 public interface FeatureMetadata {
 
 	Feature feature();

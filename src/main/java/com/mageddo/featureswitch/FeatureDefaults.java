@@ -2,6 +2,11 @@ package com.mageddo.featureswitch;
 
 import java.lang.annotation.*;
 
+/**
+ * Store default values for the feature, you can annotate a EnumBasedFeature for example
+ *
+ * @see EnumFeatureMetadataProvider
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

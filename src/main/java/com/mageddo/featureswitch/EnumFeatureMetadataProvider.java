@@ -1,10 +1,15 @@
 package com.mageddo.featureswitch;
 
-import com.mageddo.featureswitch.utils.AnnotationUtils;
+import com.mageddo.commons.AnnotationUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activating this Metadata provider you will be able to annotate your enum feature with default values and default status
+ *
+ * @see FeatureManager
+ */
 public class EnumFeatureMetadataProvider implements FeatureMetadataProvider {
 	@Override
 	public FeatureMetadata getMetadata(Feature feature) {

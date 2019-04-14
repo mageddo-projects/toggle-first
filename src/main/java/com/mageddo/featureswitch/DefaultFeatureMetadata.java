@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class DefaultFeatureMetadata implements FeatureMetadata {
 
-	private Feature feature;
-	private Map<String, String> parameters;
+	private final Feature feature;
+	private final Map<String, String> parameters;
 
 	public DefaultFeatureMetadata(Feature feature) {
 		this(feature, new LinkedHashMap<>());

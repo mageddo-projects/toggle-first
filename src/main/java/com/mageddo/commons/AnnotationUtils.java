@@ -1,4 +1,4 @@
-package com.mageddo.featureswitch.utils;
+package com.mageddo.commons;
 
 import com.mageddo.featureswitch.Feature;
 

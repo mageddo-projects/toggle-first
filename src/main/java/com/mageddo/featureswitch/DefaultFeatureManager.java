@@ -132,7 +132,6 @@ public class DefaultFeatureManager implements FeatureManager {
 		final FeatureMetadata metadata = metadata(feature);
 		switch (metadata.status()){
 			case ACTIVE:
-				return metadata;
 			case INACTIVE:
 				return metadata;
 			case RESTRICTED:

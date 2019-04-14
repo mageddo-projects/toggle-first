@@ -7,28 +7,33 @@ import org.springframework.context.ApplicationContext;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-public class FeatureContext {
+/**
+ * Responsible to find a {@link FeatureManager} instance at the classpath
+ */
+public final class FeatureContext {
+
+	private FeatureContext() {
+	}
+
 	public static FeatureManager getFeatureManager(){
-		if(existsOnClasspath("org.springframework.context.ApplicationContext")){
-			final ApplicationContext ctx = ApplicationContextProvider.getApplicationContext();
-			if(ctx != null){
-				final FeatureManager featureManager = ctx.getBean(FeatureManager.class);
-				if(featureManager != null){
-					return featureManager;
-				}
-			}
+
+		final FeatureManager featureManager = getSpringFeatureManager();
+		if (featureManager != null){
+			return featureManager;
 		}
-		final Iterator<FeatureManager> it = ServiceLoader.load(FeatureManager.class).iterator();
-		if(it.hasNext()){
-			return it.next();
+
+		final FeatureManager serviceLoaderFeatureManager = getServiceLoaderFeatureManager();
+		if(serviceLoaderFeatureManager != null){
+			return serviceLoaderFeatureManager;
 		}
+
 		return new DefaultFeatureManager()
-		.featureRepository(new InMemoryFeatureRepository())
-		.featureMetadataProvider(new EnumFeatureMetadataProvider())
+			.featureRepository(new InMemoryFeatureRepository())
+			.featureMetadataProvider(new EnumFeatureMetadataProvider())
 		;
 	}
 
-	public static boolean existsOnClasspath(String name){
+	static boolean existsOnClasspath(String name){
 		try {
 			Class.forName(name);
 			return true;
@@ -36,4 +41,32 @@ public class FeatureContext {
 			return false;
 		}
 	}
+
+	/**
+	 * Create a serviceloader file at the path <b>/META-INF/services/com.mageddo.featureswitch.FeatureManager</b> with a content like
+	 * <code>
+	 * com.mageddo.featureswitch.DefaultFeatureManager
+	 * </code>
+	 */
+	private static FeatureManager getServiceLoaderFeatureManager() {
+		final Iterator<FeatureManager> it = ServiceLoader.load(FeatureManager.class).iterator();
+		if(it.hasNext()){
+			return it.next();
+		}
+		return null;
+	}
+
+	/**
+	 * To integrate with spring just create a bean of the type {@link FeatureManager}
+	 */
+	private static FeatureManager getSpringFeatureManager() {
+		if(existsOnClasspath("org.springframework.context.ApplicationContext")){
+			final ApplicationContext ctx = ApplicationContextProvider.getApplicationContext();
+			if(ctx != null){
+				return ctx.getBean(FeatureManager.class);
+			}
+		}
+		return null;
+	}
+
 }

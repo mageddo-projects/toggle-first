@@ -4,8 +4,18 @@ import com.mageddo.featureswitch.repository.FeatureRepository;
 
 import java.util.Map;
 
+/**
+ * Make a bridge between who ask for the feature metadata, the {@link FeatureRepository} and the activation strategies.
+ *
+ * Use this class to check if feature is active, to retrieve metadata, etc
+ *
+ * @see DefaultFeatureManager
+ */
 public interface FeatureManager {
 
+	/**
+	 * Retrieve the current repository for the project
+	 */
 	FeatureRepository repository();
 
 	FeatureMetadataProvider metadataProvider();

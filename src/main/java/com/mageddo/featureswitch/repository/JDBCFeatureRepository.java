@@ -2,7 +2,7 @@ package com.mageddo.featureswitch.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mageddo.featureswitch.*;
-import com.mageddo.featureswitch.utils.StringUtils;
+import com.mageddo.commons.StringUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

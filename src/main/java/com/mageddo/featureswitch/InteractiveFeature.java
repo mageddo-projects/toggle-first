@@ -1,6 +1,12 @@
 package com.mageddo.featureswitch;
 
+/**
+ * A feature which have the power check itself state, it can communicate with the
+ * feature manager and check if it is active, retrieve feature metadata
+ */
 public interface InteractiveFeature extends Feature {
+
+	FeatureManager manager();
 
 	default Integer asInteger(){
 		return metadata().asInteger(FeatureKeys.VALUE);
@@ -78,5 +84,4 @@ public interface InteractiveFeature extends Feature {
 		return manager().metadata(this, user);
 	}
 
-	FeatureManager manager();
 }

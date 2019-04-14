@@ -1,4 +1,4 @@
-package com.mageddo.featureswitch.utils;
+package com.mageddo.commons;
 
 public final class StringUtils {
 
