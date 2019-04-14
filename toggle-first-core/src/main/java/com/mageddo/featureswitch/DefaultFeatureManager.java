@@ -1,11 +1,12 @@
 package com.mageddo.featureswitch;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mageddo.common.jackson.JsonUtils;
 import com.mageddo.featureswitch.repository.FeatureRepository;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultFeatureManager implements FeatureManager {
 
@@ -163,9 +164,30 @@ public class DefaultFeatureManager implements FeatureManager {
 
 	@Override
 	public boolean isActive(Feature feature, String user) {
+
 		final FeatureMetadata metadata = metadata(feature, user);
-		
-		return metadata.status() == Status.ACTIVE;
+		if(activationStrategies().isEmpty() || metadata.isActive()){
+			return metadata.isActive();
+		}
+
+		for (final ActivationStrategy activationStrategy : getFeatureActivationStrategies(metadata(feature))) {
+			if(activationStrategy.isActive(metadata)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private Collection<ActivationStrategy> getFeatureActivationStrategies(FeatureMetadata metadata) {
+		final Set<String> strategiesIds = JsonUtils.readValue(
+			metadata.get(FeatureKeys.ACTIVATION_STRATEGIES, "[]"),
+			new TypeReference<Set<String>>() {}
+		);
+		return activationStrategies()
+			.stream()
+			.filter(it -> strategiesIds.contains(String.valueOf(it.id())))
+			.collect(Collectors.toCollection(LinkedHashSet::new))
+		;
 	}
 
 	@Override
