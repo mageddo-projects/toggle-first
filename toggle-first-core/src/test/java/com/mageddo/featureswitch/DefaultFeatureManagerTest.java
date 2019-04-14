@@ -136,15 +136,16 @@ public class DefaultFeatureManagerTest {
 		final var metadata = featureManager.metadata(feature);
 		metadata.set(FeatureKeys.ACTIVATION_STRATEGIES, writeValueAsString(Set.of(activeActivationStrategy.id())));
 		featureManager.updateMetadata(metadata.feature(), metadata.parameters());
-
 		featureManager.userActivate(feature, userId);
 
 		// act
 		final boolean active = featureManager.isActive(feature, userId);
+		final boolean active2 = featureManager.isActive(feature, "321");
 
 		// assert
 		assertEquals(true, active);
-		verify(activeActivationStrategy, never()).isActive(any());
+		assertEquals(false, active2);
+		verify(activeActivationStrategy).isActive(any());
 	}
 
 }

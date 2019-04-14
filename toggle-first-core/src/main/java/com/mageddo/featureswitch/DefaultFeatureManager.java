@@ -56,8 +56,7 @@ public class DefaultFeatureManager implements FeatureManager {
 			final FeatureMetadata metadata = metadataOrDefault(feature, user)
 			.set(FeatureKeys.STATUS, String.valueOf(Status.RESTRICTED.getCode()))
 			;
-
-			repository().updateMetadata(metadata, null);
+			updateMetadata(feature, metadata.parameters());
 		}
 		{
 			FeatureMetadata metadata = repository().getMetadata(feature, user);
