@@ -16,10 +16,15 @@ import java.util.LinkedHashMap;
 public class JDBCFeatureRepository implements FeatureRepository {
 
 	private final DataSource dataSource;
-	private final ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper;
 
 	public JDBCFeatureRepository(final DataSource dataSource) {
+		this(dataSource, new ObjectMapper());
+	}
+
+	public JDBCFeatureRepository(final DataSource dataSource, ObjectMapper mapper) {
 		this.dataSource = dataSource;
+		this.mapper = mapper;
 	}
 
 	@Override

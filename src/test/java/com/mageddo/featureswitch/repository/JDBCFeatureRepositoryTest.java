@@ -24,7 +24,7 @@ public class JDBCFeatureRepositoryTest {
 		dataSource.setUser("sa");
 		dataSource.setPassword("");
 		dataSource.setURL("jdbc:hsqldb:mem:testdb;set schema public");
-				jdbcFeatureRepository = new JDBCFeatureRepository(dataSource);
+		jdbcFeatureRepository = new JDBCFeatureRepository(dataSource);
 	}
 
 	@Before
