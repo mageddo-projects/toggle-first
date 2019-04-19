@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id "io.codearte.nexus-staging" version "0.20.0"
+	id "de.marcphilipp.nexus-publish" version "0.2.0"
 }
 
 nexusStaging {
@@ -12,7 +13,8 @@ nexusStaging {
 subprojects {
 
 	apply plugin: 'java'
-	apply plugin: 'maven'
+	apply plugin: 'maven-publish'
+	apply plugin: "de.marcphilipp.nexus-publish"
 
 	repositories {
 		mavenLocal()
@@ -52,46 +54,38 @@ subprojects {
 		}
 	}
 
-	uploadArchives {
-		repositories {
-			mavenDeployer {
-				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-					authentication(userName: project.findProperty("ossrhUsername"), password: project.findProperty("ossrhPassword"))
-				}
-
-				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-					authentication(userName: project.findProperty("ossrhUsername"), password: project.findProperty("ossrhPassword"))
-				}
-
-				pom.project {
-					name project.name
-					packaging 'jar'
-					description project.description
-					url "https://github.com/mageddo/mageddo-projects/tree/master/" + project.name
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				pom {
+					name = project.name
+					packaging = 'jar'
+					description = project.description
+					url = "${githubRepoUrl}/tree/master/" + project.name
 
 					scm {
-						connection 'https://github.com/mageddo/mageddo-projects.git'
-						developerConnection 'https://github.com/mageddo/mageddo-projects.git'
-						url "https://github.com/mageddo/mageddo-projects/tree/master/" + project.name
+						connection = "${githubRepoUrl}.git"
+						developerConnection = "${githubRepoUrl}.git"
+						url = "${githubRepoUrl}/tree/master/" + project.name
 					}
 
 					licenses {
 						license {
-							name 'The Apache License, Version 2.0'
-							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+							name = 'The Apache License, Version 2.0'
+							url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 						}
 					}
 
 					developers {
 						developer {
-							id 'mageddo'
-							name 'Elvis Souza'
-							email 'edigitalb@gmail.com'
+							id = 'mageddo'
+							name = 'Elvis Souza'
+							email = 'edigitalb@gmail.com'
 						}
 					}
+
 				}
+				from(components.java)
 			}
 		}
 	}

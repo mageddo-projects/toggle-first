@@ -27,11 +27,11 @@ case $1 in
 		export GRADLE_PROJECT_OPTS="${GRADLE_PROJECT_OPTS} -Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID}"
 		export GRADLE_PROJECT_OPTS="${GRADLE_PROJECT_OPTS} -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg"
 
-		./gradlew build uploadArchives ${GRADLE_PROJECT_OPTS}
-		./gradlew closeAndReleaseRepository ${GRADLE_PROJECT_OPTS}
+		./gradlew build publishToNexus closeAndReleaseRepository ${GRADLE_PROJECT_OPTS}
 
 		# publishing tag
-		REMOTE="https://${REPO_TOKEN}@github.com/mageddo/toggle-first.git"
+		GITHUB_REPO_URL=$(cat gradle.properties | grep 'githubRepoUrl' | awk -F = '{ print $2}')
+		REMOTE="https://${REPO_TOKEN}@${GITHUB_REPO_UR}.git"
 		APP_VERSION=$(./gradlew -q version)
 		git tag ${APP_VERSION}
 		git push "$REMOTE" --tags
