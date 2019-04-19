@@ -10,6 +10,9 @@ services:
     environment:
       - CURRENT_BRANCH=$TRAVIS_BRANCH # current branch name
       - REPO_TOKEN=$REPO_TOKEN # current branch name
+      - ENCRYPTION_KEY=$ENCRYPTION_KEY
+      - SIGNING_KEY_ID=$SIGNING_KEY_ID
+      - SIGNING_PASSWORD=$SIGNING_PASSWORD
 
   travis-pull-request-build:
     image: openjdk:11-jdk
