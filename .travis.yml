@@ -1,6 +1,9 @@
 language: java
 sudo: required
 
+jdk:
+  - openjdk11
+
 before_install:
   # decrypting gpg key
   - openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
