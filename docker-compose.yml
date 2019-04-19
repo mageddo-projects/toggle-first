@@ -9,6 +9,7 @@ services:
       - $HOME:/root
     environment:
       - CURRENT_BRANCH=$TRAVIS_BRANCH # current branch name
+      - REPO_TOKEN=$REPO_TOKEN # current branch name
 
   travis-pull-request-build:
     image: openjdk:11-jdk
