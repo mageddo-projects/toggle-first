@@ -1,9 +1,6 @@
 sudo: required
 language: java
 
-script: docker-compose down && docker-compose up --abort-on-container-exit travis-build
-
-#branches:
-#  only:
-#  - master
-#
+script:
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker-compose down && docker-compose up --abort-on-container-exit travis-pull-request-build; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash docker-compose down && docker-compose up --abort-on-container-exit travis-build; fi'

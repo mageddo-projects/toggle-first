@@ -14,3 +14,11 @@ services:
     volumes:
       - ./:/app
       - $HOME:/root
+
+  travis-pull-request-build:
+    image: openjdk:11-jdk
+    command: ./gradlew build
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - $HOME:/root
