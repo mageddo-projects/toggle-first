@@ -4,10 +4,12 @@ services:
     image: openjdk:11-jdk
     command: |
       sh -c '
-        openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
+        mkdir -p $HOME/.gnupg/
+        export SECRING_PATH=$HOME/.gnupg/secring.gpg
+        openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out ${SECRING_PATH}
         ./gradlew build uploadArchives -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
         -Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID} \
-        -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
+        -Psigning.secretKeyRingFile=${SECRING_PATH}
       '
     working_dir: /app
     volumes:
