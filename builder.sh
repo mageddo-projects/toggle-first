@@ -30,7 +30,7 @@ case $1 in
 			-Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
 
 		# publishing tag
-		REMOTE="https://${REPO_TOKEN}@github.com/mageddo/dns-proxy-server.git"
+		REMOTE="https://${REPO_TOKEN}@github.com/mageddo/toggle-first.git"
 		APP_VERSION=$(./gradlew -q version)
 		git tag ${APP_VERSION}
 		git push "$REMOTE" --tags
