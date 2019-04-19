@@ -5,18 +5,25 @@ import com.mageddo.togglefirst.spring.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Responsible to find a {@link FeatureManager} instance at the classpath
  */
 public final class FeatureContext {
 
+	private static final Map<String, FeatureManager> FEATURE_MANGER = new ConcurrentHashMap<>();
+
 	private FeatureContext() {
 	}
 
 	public static FeatureManager getFeatureManager(){
+		return FEATURE_MANGER.computeIfAbsent("featureManager", (k) -> constructFeatureManager());
+	}
 
+	private static FeatureManager constructFeatureManager() {
 		final FeatureManager featureManager = getSpringFeatureManager();
 		if (featureManager != null){
 			return featureManager;
