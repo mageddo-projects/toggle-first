@@ -33,30 +33,26 @@ subprojects {
 		options.encoding = 'UTF-8'
 	}
 
-	task javadocJar(type: Jar) {
-		classifier = 'javadoc'
-		from javadoc
+	task sourcesJar(type: Jar) {
+		from sourceSets.main.allJava
+		archiveClassifier = 'sources'
 	}
 
-	task sourcesJar(type: Jar) {
-		classifier = 'sources'
-		from sourceSets.main.allSource
+	task javadocJar(type: Jar) {
+		from javadoc
+		archiveClassifier = 'javadoc'
 	}
 
 	artifacts {
 		archives javadocJar, sourcesJar
 	}
 
-	if (project.hasProperty("signing.keyId")) {
-		apply plugin: 'signing'
-		signing {
-			sign configurations.archives
-		}
-	}
-
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
+				from(components.java)
+				artifact sourcesJar
+				artifact javadocJar
 				pom {
 					name = project.name
 					packaging = 'jar'
@@ -85,8 +81,14 @@ subprojects {
 					}
 
 				}
-				from(components.java)
 			}
+		}
+	}
+
+	if (project.hasProperty("signing.keyId")) {
+		apply plugin: 'signing'
+		signing {
+			sign publishing.publications.mavenJava
 		}
 	}
 
