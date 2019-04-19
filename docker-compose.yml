@@ -2,10 +2,7 @@ version: '3'
 services:
   travis-build:
     image: openjdk:11-jdk
-    command: |
-      sh -c '
-
-      '
+    command: ./builder.sh deploy
     working_dir: /app
     volumes:
       - ./:/app

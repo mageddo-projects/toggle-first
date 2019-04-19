@@ -4,6 +4,8 @@ case $1 in
 
 	deploy )
 
+		echo '> deploying'
+
 		validateRelease
 
 		# preparing gpg key
