@@ -1,0 +1,17 @@
+version: '3'
+services:
+  build:
+    image: openjdk:11-jdk
+    command: ./gradlew build
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - $HOME:/root
+
+  upload-archives:
+    image: openjdk:11-jdk
+    command: ./gradlew uploadArchives
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - $HOME:/root
