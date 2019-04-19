@@ -1,5 +1,12 @@
 plugins {
 	id 'java'
+	id "io.codearte.nexus-staging" version "0.20.0"
+}
+
+nexusStaging {
+	packageGroup = 'com.mageddo'
+	username = project.findProperty("ossrhUsername")
+	password = project.findProperty("ossrhPassword")
 }
 
 subprojects {
