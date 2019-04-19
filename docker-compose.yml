@@ -3,8 +3,10 @@ services:
   travis-build:
     image: openjdk:11-jdk
     command: |
+      sh -c '
       ./gradlew build
       ./gradlew uploadArchives
+      '
     working_dir: /app
     volumes:
       - ./:/app
