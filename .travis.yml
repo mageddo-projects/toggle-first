@@ -3,8 +3,12 @@ sudo: required
 services:
   - docker
 
-script: ./gradlew build
+script: |
+    docker-compose down &&
+    docker-compose up --abort-on-container-exit build &&
+    docker-compose up --abort-on-container-exit upload-archives
 
-branches:
-  only:
-  - master
+#branches:
+#  only:
+#  - master
+#
