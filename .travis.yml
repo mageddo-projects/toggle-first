@@ -3,7 +3,7 @@ sudo: required
 
 before_install:
   # decrypting gpg key
-  - openssl aes-256-cbc -d -pbkdf2 -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
+  - openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
 
 script: >
   ./gradlew build uploadArchives -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
