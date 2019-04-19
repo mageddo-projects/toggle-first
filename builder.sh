@@ -7,7 +7,7 @@ validateRelease(){
 	APP_VERSION=$(./gradlew -q version)
 	if git rev-parse "$APP_VERSION^{}" >/dev/null 2>&1; then
 		echo "> Version already exists $APP_VERSION"
-		exit 3
+		exit 0
 	fi
 }
 
