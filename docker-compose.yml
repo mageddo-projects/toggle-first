@@ -5,11 +5,10 @@ services:
     command: |
       sh -c '
         mkdir -p $HOME/.gnupg/
-        export SECRING_PATH=$HOME/.gnupg/secring.gpg
-        openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out ${SECRING_PATH}
+        openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
         ./gradlew build uploadArchives -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
         -Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID} \
-        -Psigning.secretKeyRingFile=${SECRING_PATH}
+        -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
       '
     working_dir: /app
     volumes:
