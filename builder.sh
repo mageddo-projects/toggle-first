@@ -10,7 +10,6 @@ validateRelease(){
 	fi
 }
 
-
 case $1 in
 
 	deploy )
@@ -24,9 +23,12 @@ case $1 in
 		openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
 
 		# building and deploying to sonatype nexys
-		./gradlew build uploadArchives closeRepository releaseRepository -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
-			-Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID} \
-			-Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
+		export GRADLE_PROJECT_OPTS="-PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD}"
+		export GRADLE_PROJECT_OPTS="${GRADLE_PROJECT_OPTS} -Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID}"
+		export GRADLE_PROJECT_OPTS="${GRADLE_PROJECT_OPTS} -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg"
+
+		./gradlew build uploadArchives ${GRADLE_PROJECT_OPTS}
+		./gradlew closeAndReleaseRepository ${GRADLE_PROJECT_OPTS}
 
 		# publishing tag
 		REMOTE="https://${REPO_TOKEN}@github.com/mageddo/toggle-first.git"
@@ -34,7 +36,7 @@ case $1 in
 		git tag ${APP_VERSION}
 		git push "$REMOTE" --tags
 		git status
-		echo "> Branch pushed. branch=$CURRENT_BRANCH, version=${APP_VERSION}"
+		echo "> Branch pushed. branch=${CURRENT_BRANCH}, version=${APP_VERSION}"
 
 	;;
 
