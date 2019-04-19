@@ -7,6 +7,8 @@ services:
     volumes:
       - ./:/app
       - $HOME:/root
+    environment:
+      - CURRENT_BRANCH=$TRAVIS_BRANCH # current branch name
 
   travis-pull-request-build:
     image: openjdk:11-jdk
