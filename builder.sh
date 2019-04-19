@@ -1,5 +1,17 @@
 #!/bin/bash
 
+set -e
+
+
+validateRelease(){
+	APP_VERSION=$(./gradlew -q version)
+	if git rev-parse "$APP_VERSION^{}" >/dev/null 2>&1; then
+		echo "> Version already exists $APP_VERSION"
+		exit 3
+	fi
+}
+
+
 case $1 in
 
 	deploy )
@@ -28,11 +40,3 @@ case $1 in
 	;;
 
 esac
-
-validateRelease(){
-	APP_VERSION=$(./gradlew -q version)
-	if git rev-parse "$APP_VERSION^{}" >/dev/null 2>&1; then
-		echo "> Version already exists $APP_VERSION"
-		exit 3
-	fi
-}
