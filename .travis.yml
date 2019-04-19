@@ -1,8 +1,10 @@
-language: java
 sudo: required
+language: java
 
-jdk:
-  - openjdk11
+matrix:
+  include:
+    - env: DEPLOY='linux'
+      jdk: openjdk11
 
 before_install:
   # decrypting gpg key
