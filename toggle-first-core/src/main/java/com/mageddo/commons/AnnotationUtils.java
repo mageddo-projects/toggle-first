@@ -1,6 +1,6 @@
 package com.mageddo.commons;
 
-import com.mageddo.featureswitch.Feature;
+import com.mageddo.togglefirst.Feature;
 
 import java.lang.annotation.Annotation;
 
