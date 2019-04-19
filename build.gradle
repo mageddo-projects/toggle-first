@@ -116,3 +116,7 @@ project(":toggle-first-repo-jdbc") {
 		testCompile group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
 	}
 }
+
+task version(){
+	println(project.version)
+}

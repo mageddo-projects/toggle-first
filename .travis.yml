@@ -1,14 +1,8 @@
 sudo: required
-
+language: java
 services:
   - docker
 
-script: |
-    docker-compose down &&
-    docker-compose up --abort-on-container-exit build &&
-    docker-compose up --abort-on-container-exit upload-archives
-
-#branches:
-#  only:
-#  - master
-#
+script:
+  - 'if [ "$TRAVIS_BRANCH" = "master" ]; then docker-compose down && docker-compose up --abort-on-container-exit travis-build; fi'
+  - 'if [ "$TRAVIS_BRANCH" != "master" ]; then docker-compose down && docker-compose up --abort-on-container-exit travis-pull-request-build; fi'

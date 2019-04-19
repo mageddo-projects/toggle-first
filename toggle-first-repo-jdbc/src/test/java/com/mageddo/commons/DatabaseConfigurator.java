@@ -1,6 +1,6 @@
 package com.mageddo.commons;
 
-import com.mageddo.featureswitch.SQLToggleFirstException;
+import com.mageddo.togglefirst.SQLToggleFirstException;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
