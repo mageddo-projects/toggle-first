@@ -31,7 +31,7 @@ case $1 in
 
 		# publishing tag
 		GITHUB_REPO_URL=$(cat gradle.properties | grep 'githubRepoUrl' | awk -F = '{ print $2}')
-		REMOTE="https://${REPO_TOKEN}@${GITHUB_REPO_UR}.git"
+		REMOTE="https://${REPO_TOKEN}@${GITHUB_REPO_URL}.git"
 		APP_VERSION=$(./gradlew -q version)
 		git tag ${APP_VERSION}
 		git push "$REMOTE" --tags

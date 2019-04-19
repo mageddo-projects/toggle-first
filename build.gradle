@@ -80,6 +80,13 @@ subprojects {
 						}
 					}
 
+					distributionManagement {
+						relocation {
+							groupId = 'com.mageddo'
+							artifactId = 'feature-switch'
+						}
+					}
+
 				}
 			}
 		}
