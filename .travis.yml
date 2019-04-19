@@ -3,10 +3,7 @@ sudo: required
 services:
   - docker
 
-script: |
-    docker-compose down &&
-    docker-compose up --abort-on-container-exit build &&
-    docker-compose up --abort-on-container-exit upload-archives
+script: docker-compose down && docker-compose up --abort-on-container-exit travis-build
 
 #branches:
 #  only:
