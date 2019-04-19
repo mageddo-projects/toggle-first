@@ -1,19 +1,7 @@
 sudo: required
 language: java
 
-matrix:
-  include:
-    - env: DEPLOY='linux'
-      jdk: openjdk11
-
-before_install:
-  # decrypting gpg key
-  - openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
-
-script: >
-  ./gradlew build uploadArchives -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
-  -Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID} \
-  -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
+script: docker-compose down && docker-compose up travis-build
 
 #branches:
 #  only:
