@@ -18,16 +18,12 @@ case $1 in
 			-Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
 
 		# publishing tag
-		REMOTE="https://${REPO_TOKEN}@github.com/${REPO_URL}.git"
-
-		git checkout -b build_branch ${CURRENT_BRANCH}
-		echo "> Repository added, currentBranch=${CURRENT_BRANCH}"
-
-		git commit -am "Releasing ${APP_VERSION}" || true
+		REMOTE="https://${REPO_TOKEN}@github.com/mageddo/dns-proxy-server.git"
+		APP_VERSION=$(./gradlew -q version)
 		git tag ${APP_VERSION}
-		git push "$REMOTE" "build_branch:${CURRENT_BRANCH}"
+		git push "$REMOTE" --tags
 		git status
-		echo "> Branch pushed - Branch $CURRENT_BRANCH"
+		echo "> Branch pushed. branch=$CURRENT_BRANCH, version=${APP_VERSION}"
 
 	;;
 
