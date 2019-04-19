@@ -1,16 +1,10 @@
 version: '3'
 services:
-  build:
+  travis-build:
     image: openjdk:11-jdk
-    command: ./gradlew build
-    working_dir: /app
-    volumes:
-      - ./:/app
-      - $HOME:/root
-
-  upload-archives:
-    image: openjdk:11-jdk
-    command: ./gradlew uploadArchives
+    command: |
+      ./gradlew build
+      ./gradlew uploadArchives
     working_dir: /app
     volumes:
       - ./:/app
