@@ -2,7 +2,6 @@
 
 set -e
 
-
 validateRelease(){
 	APP_VERSION=$(./gradlew -q version)
 	if git rev-parse "$APP_VERSION^{}" >/dev/null 2>&1; then
@@ -25,7 +24,7 @@ case $1 in
 		openssl aes-256-cbc -d -k ${ENCRYPTION_KEY} -in files/deployment/.gnupg/secring.gpg -out $HOME/.gnupg/secring.gpg
 
 		# building and deploying to sonatype nexys
-		./gradlew build uploadArchives -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
+		./gradlew build uploadArchives closeRepository releaseRepository -PossrhUsername=mageddo -PossrhPassword=${SIGNING_PASSWORD} \
 			-Psigning.password=${SIGNING_PASSWORD} -Psigning.keyId=${SIGNING_KEY_ID} \
 			-Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg
 
