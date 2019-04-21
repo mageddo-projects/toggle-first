@@ -42,3 +42,6 @@ Parameter.FREE_COINS.isActive();
 ```java
 FeatureSwitchJMX.register();
 ```
+
+### Examples
+* [Some toggle first examples](https://github.com/mageddo/toggle-first-examples)
